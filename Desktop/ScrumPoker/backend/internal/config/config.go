@@ -27,7 +27,7 @@ func Load() Config {
 		MySQLHost:     env("MYSQL_HOST", "localhost"),
 		MySQLPort:     env("MYSQL_PORT", "3306"),
 		MySQLUser:     env("MYSQL_USER", "root"),
-		MySQLPass:     env("MYSQL_PASSWORD", "mersad"),
+		MySQLPass:     env("MYSQL_PASSWORD", ""),
 		MySQLDB:       env("MYSQL_DATABASE", "scrum_poker"),
 		RedisAddr:     env("REDIS_ADDR", "localhost:6379"),
 		RedisPassword: env("REDIS_PASSWORD", ""),
