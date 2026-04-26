@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  --app-bg: 243 245 251;
+  --app-text: 16 20 37;
+  --app-muted: 88 97 119;
+  --surface-1: 255 255 255;
+  --surface-2: 235 239 250;
+  --surface-3: 215 224 243;
+  --brand-100: 216 227 255;
+  --brand-200: 192 210 255;
+  --brand-400: 115 152 255;
+  --brand-500: 63 109 246;
+  --accent-200: 142 245 226;
+  --accent-500: 16 176 169;
+}
+
+.dark {
+  color-scheme: dark;
+  --app-bg: 10 16 32;
+  --app-text: 244 247 251;
+  --app-muted: 169 180 209;
+  --surface-1: 17 25 48;
+  --surface-2: 23 33 62;
+  --surface-3: 31 44 83;
+  --brand-100: 216 227 255;
+  --brand-200: 192 210 255;
+  --brand-400: 107 146 255;
+  --brand-500: 90 135 255;
+  --accent-200: 142 245 226;
+  --accent-500: 29 211 183;
+}
+
+@layer base {
+  html {
+    font-family: Vazirmatn, sans-serif;
+    background:
+      radial-gradient(circle at top right, rgba(63, 109, 246, 0.22), transparent 32%),
+      radial-gradient(circle at bottom left, rgba(29, 211, 183, 0.16), transparent 25%),
+      var(--app-bg);
+  }
+
+  body {
+    min-height: 100vh;
+    color: var(--app-text);
+    background: transparent;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(99, 129, 255, 0.45) transparent;
+  }
+}
+
+@layer utilities {
+  .bg-app {
+    background:
+      radial-gradient(circle at top right, rgba(63, 109, 246, 0.18), transparent 30%),
+      radial-gradient(circle at bottom left, rgba(29, 211, 183, 0.16), transparent 24%),
+      rgb(var(--app-bg));
+  }
+}
