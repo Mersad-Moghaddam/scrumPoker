@@ -34,7 +34,10 @@ func (s *RoomService) CreateRoom(ctx context.Context, displayName string) (*mode
 	if err != nil {
 		return nil, err
 	}
-	token := randomToken(32)
+	token, err := randomToken(32)
+	if err != nil {
+		return nil, err
+	}
 	room, member, err := s.repo.CreateRoom(ctx, roomCode, displayName, token)
 	if err != nil {
 		return nil, err
@@ -63,7 +66,10 @@ func (s *RoomService) JoinRoom(ctx context.Context, roomCode, displayName string
 		return nil, err
 	}
 
-	token := randomToken(32)
+	token, err := randomToken(32)
+	if err != nil {
+		return nil, err
+	}
 	member, err := s.repo.CreateMember(ctx, room.ID, displayName, token)
 	if err != nil {
 		return nil, err
@@ -456,8 +462,11 @@ func (s *RoomService) publish(ctx context.Context, roomCode, eventType string, p
 
 func (s *RoomService) generateUniqueRoomCode(ctx context.Context) (string, error) {
 	for range 10 {
-		code := randomRoomCode()
-		_, err := s.repo.GetRoomByCode(ctx, code)
+		code, err := randomRoomCode()
+		if err != nil {
+			return "", err
+		}
+		_, err = s.repo.GetRoomByCode(ctx, code)
 		if errors.Is(err, sql.ErrNoRows) {
 			return code, nil
 		}
@@ -470,23 +479,29 @@ func (s *RoomService) generateUniqueRoomCode(ctx context.Context) (string, error
 
 var roomAlphabet = []rune("ABCDEFGHJKLMNPQRSTUVWXYZ23456789")
 
-func randomRoomCode() string {
+func randomRoomCode() (string, error) {
 	result := make([]rune, 6)
 	for i := range result {
-		index, _ := rand.Int(rand.Reader, big.NewInt(int64(len(roomAlphabet))))
+		index, err := rand.Int(rand.Reader, big.NewInt(int64(len(roomAlphabet))))
+		if err != nil {
+			return "", err
+		}
 		result[i] = roomAlphabet[index.Int64()]
 	}
-	return string(result)
+	return string(result), nil
 }
 
-func randomToken(length int) string {
+func randomToken(length int) (string, error) {
 	const alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 	result := make([]byte, length)
 	for i := range result {
-		index, _ := rand.Int(rand.Reader, big.NewInt(int64(len(alphabet))))
+		index, err := rand.Int(rand.Reader, big.NewInt(int64(len(alphabet))))
+		if err != nil {
+			return "", err
+		}
 		result[i] = alphabet[index.Int64()]
 	}
-	return string(result)
+	return string(result), nil
 }
 
 func normalizeRoomCode(code string) string {

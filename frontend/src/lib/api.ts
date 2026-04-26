@@ -66,6 +66,15 @@ export async function fetchHistory(code: string, token: string) {
 }
 
 export function wsUrl(roomCode: string, token: string) {
-  const base = (import.meta.env.VITE_WS_URL as string | undefined) ?? API_URL.replace("http", "ws");
-  return `${base}/ws/rooms/${roomCode}?token=${encodeURIComponent(token)}`;
+  const explicitWsUrl = import.meta.env.VITE_WS_URL as string | undefined;
+  const baseUrl = explicitWsUrl ?? API_URL;
+  const url = new URL(baseUrl);
+  if (url.protocol === "http:") {
+    url.protocol = "ws:";
+  } else if (url.protocol === "https:") {
+    url.protocol = "wss:";
+  }
+  url.pathname = `/ws/rooms/${roomCode}`;
+  url.search = `token=${encodeURIComponent(token)}`;
+  return url.toString();
 }

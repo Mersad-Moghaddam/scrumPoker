@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowRight, Copy, DoorOpen, LoaderCircle } from "lucide-react";
+import { Copy, DoorOpen, LoaderCircle } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
@@ -8,7 +8,6 @@ import { Button } from "../../components/ui/button";
 import { Card } from "../../components/ui/card";
 import { createTask, fetchRoom, submitVote } from "../../lib/api";
 import { clearRoomSession, getRoomSession } from "../../lib/session";
-import { toPersianDigits } from "../../lib/utils";
 import { HistoryPanel } from "./components/history-panel";
 import { MembersPanel } from "./components/members-panel";
 import { TaskStage } from "./components/task-stage";
@@ -51,11 +50,10 @@ export function RoomPage() {
   if (!session || !roomCode) {
     return (
       <AppShell>
-        <Card className="space-y-4 text-center">
-          <h2 className="text-2xl font-black">جلسه این اتاق پیدا نشد</h2>
-          <p className="text-app-muted">برای ورود دوباره، از صفحه اصلی وارد اتاق شوید.</p>
+        <Card className="space-y-3 p-4 text-center">
+          <h2 className="text-lg font-bold">جلسه نامعتبر</h2>
           <Link to="/">
-            <Button className="mx-auto">بازگشت به خانه</Button>
+            <Button className="mx-auto">خانه</Button>
           </Link>
         </Card>
       </AppShell>
@@ -65,9 +63,9 @@ export function RoomPage() {
   if (roomQuery.isLoading) {
     return (
       <AppShell>
-        <Card className="flex items-center justify-center gap-3 py-16 text-app-muted">
-          <LoaderCircle className="animate-spin" />
-          در حال بارگذاری وضعیت اتاق...
+        <Card className="flex items-center justify-center gap-2 py-8 text-app-muted">
+          <LoaderCircle size={16} className="animate-spin" />
+          در حال بارگذاری
         </Card>
       </AppShell>
     );
@@ -76,15 +74,15 @@ export function RoomPage() {
   if (roomQuery.isError || !roomQuery.data) {
     return (
       <AppShell>
-        <Card className="space-y-4 text-center">
-          <h2 className="text-2xl font-black">ورود به اتاق ممکن نشد</h2>
-          <p className="text-app-muted">{(roomQuery.error as Error)?.message ?? "لطفا دوباره تلاش کنید."}</p>
-          <div className="flex justify-center gap-3">
+        <Card className="space-y-3 p-4 text-center">
+          <h2 className="text-lg font-bold">خطا</h2>
+          <p className="text-sm text-app-muted">{(roomQuery.error as Error)?.message ?? "دوباره تلاش کنید"}</p>
+          <div className="flex justify-center gap-2">
             <Link to="/">
-              <Button>بازگشت به خانه</Button>
+              <Button>خانه</Button>
             </Link>
             <Button variant="ghost" onClick={() => roomQuery.refetch()}>
-              تلاش دوباره
+              تلاش
             </Button>
           </div>
         </Card>
@@ -96,59 +94,43 @@ export function RoomPage() {
 
   return (
     <AppShell>
-      <div className="space-y-6">
-        <Card className="overflow-hidden">
-          <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
-            <div className="space-y-3">
-              <p className="text-sm text-app-muted">کد اتاق</p>
-              <div className="flex flex-wrap items-center gap-3">
-                <span className="rounded-2xl bg-surface-2 px-4 py-3 font-mono text-2xl tracking-[0.35em]" dir="ltr">
-                  {room.room.code}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => navigator.clipboard.writeText(room.room.code)}
-                  className="inline-flex items-center gap-2 rounded-2xl bg-white/5 px-3 py-2 text-sm text-app-muted transition hover:bg-white/10"
-                >
-                  <Copy size={16} />
-                  کپی
-                </button>
-              </div>
-              <p className="text-sm text-app-muted">
-                اعضای فعال: {toPersianDigits(room.members.filter((member) => member.isActive).length)} نفر
-              </p>
+      <div className="space-y-4">
+        <Card className="p-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <span className="rounded-xl bg-surface-2 px-3 py-2 font-mono tracking-[0.25em]" dir="ltr">
+                {room.room.code}
+              </span>
+              <button
+                type="button"
+                onClick={() => navigator.clipboard.writeText(room.room.code)}
+                className="inline-flex items-center gap-1 rounded-xl bg-white/5 px-2 py-2 text-sm text-app-muted transition hover:bg-white/10"
+              >
+                <Copy size={14} />
+                کپی
+              </button>
             </div>
 
-            <div className="flex flex-wrap gap-3">
-              <Button
-                variant="ghost"
-                className="gap-2"
-                onClick={() => {
-                  clearRoomSession(roomCode);
-                  navigate("/");
-                }}
-              >
-                <DoorOpen size={16} />
-                خروج از اتاق
-              </Button>
-              <Link to="/" className="inline-flex">
-                <Button variant="secondary" className="gap-2">
-                  <ArrowRight size={16} />
-                  خانه
-                </Button>
-              </Link>
-            </div>
+            <Button
+              variant="ghost"
+              className="gap-1"
+              onClick={() => {
+                clearRoomSession(roomCode);
+                navigate("/");
+              }}
+            >
+              <DoorOpen size={14} />
+              خروج
+            </Button>
           </div>
         </Card>
 
-        <div className="grid gap-6 xl:grid-cols-[280px_minmax(0,1fr)_320px]">
+        <div className="grid gap-4 lg:grid-cols-[240px_minmax(0,1fr)_280px]">
           <MembersPanel members={room.members} meId={room.me.id} />
 
-          <div className="space-y-4">
+          <div className="space-y-3">
             {actionError ? (
-              <Card className="border border-rose-400/30 bg-rose-500/10 text-sm text-rose-100">
-                {actionError}
-              </Card>
+              <Card className="border border-rose-400/30 bg-rose-500/10 p-3 text-sm text-rose-100">{actionError}</Card>
             ) : null}
             <TaskStage
               room={room}
