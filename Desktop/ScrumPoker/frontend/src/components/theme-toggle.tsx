@@ -7,9 +7,13 @@ export function ThemeToggle() {
   const { theme, toggleTheme } = useTheme();
 
   return (
-    <Button variant="secondary" onClick={toggleTheme} className="gap-2">
+    <Button
+      variant="secondary"
+      onClick={toggleTheme}
+      className="px-3"
+      aria-label={theme === "dark" ? "حالت روشن" : "حالت تیره"}
+    >
       {theme === "dark" ? <SunMedium size={16} /> : <MoonStar size={16} />}
-      <span>{theme === "dark" ? "حالت روشن" : "حالت تیره"}</span>
     </Button>
   );
 }
